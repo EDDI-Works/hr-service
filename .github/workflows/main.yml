@@ -20,17 +20,6 @@ jobs:
         with:
           java-version: '17'
           distribution: 'zulu'
-
-      ## gradle caching (optional)
-      # - name: Gradle Caching
-      #   uses: actions/cache@v3
-      #   with:
-      #     path: |
-      #       ~/.gradle/caches
-      #       ~/.gradle/wrapper
-      #     key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
-      #     restore-keys: |
-      #       ${{ runner.os }}-gradle-
         
       - name: Create application.yaml for CD Deploy
         run: |
@@ -50,7 +39,7 @@ jobs:
         run: |
           docker login ghcr.io -u imcoder0000 -p ${{ secrets.GHCR_TOKEN }}
           docker buildx create --name arm64builder --use
-          docker buildx build --platform linux/amd64,linux/arm64 -f Dockerfile -t ghcr.io/imcoder0000/spring-backend:latest --push .
+          docker buildx build --platform linux/amd64,linux/arm64 -f Dockerfile -t ghcr.io/imcoder0000/hr-service:latest --push .
           docker logout
           
   deploy:
