@@ -6,7 +6,7 @@ on:
       - main
 
 env:
-  DOCKER_IMAGE: ghcr.io/imcoder0000/spring-backend:latest
+  DOCKER_IMAGE: ghcr.io/imcoder0000/hr-service:latest
 
 jobs:
   build:
