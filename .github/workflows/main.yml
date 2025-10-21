@@ -58,18 +58,14 @@ jobs:
     name: Deploy
     runs-on: [ self-hosted, hr-service ]
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-  
-      - name: Deploy to Production
+      - name: Deploy to Production (local shell)
         run: |
           cd /home/ec2-user/hr-service/spring
-          docker-compose down
-  
+          docker-compose stop server  # 기존 DB/Redis는 유지
+      
           echo ${{ secrets.GHCR_TOKEN }} | docker login ghcr.io -u imcoder0000 --password-stdin
-          docker pull ${{ env.DOCKER_IMAGE }}
-  
+          docker pull ghcr.io/imcoder0000/spring-backend:latest
           docker image prune -f
           docker logout
-  
+      
           docker-compose up -d
