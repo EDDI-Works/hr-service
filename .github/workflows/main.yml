@@ -63,7 +63,7 @@ jobs:
   
       - name: Deploy to Production
         run: |
-          cd /home/ec2-user/spring/test-backend
+          cd /home/ec2-user/hr-service/spring
           docker-compose down
   
           echo ${{ secrets.GHCR_TOKEN }} | docker login ghcr.io -u ${{ secrets.GIT_ACTOR }} --password-stdin
