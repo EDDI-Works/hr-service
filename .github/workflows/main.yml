@@ -64,7 +64,7 @@ jobs:
           docker-compose stop server  # 기존 DB/Redis는 유지
       
           echo ${{ secrets.GHCR_TOKEN }} | docker login ghcr.io -u imcoder0000 --password-stdin
-          docker pull ghcr.io/imcoder0000/spring-backend:latest
+          docker pull ghcr.io/imcoder0000/hr-service:latest
           docker image prune -f
           docker logout
       
