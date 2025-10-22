@@ -27,6 +27,9 @@ public class RedisConfig {
     @Value("${spring.data.redis.password}")
     private String password;
     
+    @Value("${spring.data.redis.ssl.enabled:false}")
+    private boolean sslEnabled;
+    
     @Bean
     public RedisConnectionFactory redisConnectionFactory() {
         RedisStandaloneConfiguration config = new RedisStandaloneConfiguration();
@@ -44,10 +47,17 @@ public class RedisConfig {
                 .socketOptions(socketOptions)
                 .build();
         
-        LettuceClientConfiguration clientConfig = LettuceClientConfiguration.builder()
-                .commandTimeout(Duration.ofSeconds(5))
-                .clientOptions(clientOptions)
-                .build();
+        LettuceClientConfiguration.LettuceClientConfigurationBuilder clientConfigBuilder = 
+                LettuceClientConfiguration.builder()
+                .commandTimeout(Duration.ofSeconds(10))
+                .clientOptions(clientOptions);
+        
+        // SSL 활성화 (AWS ElastiCache Serverless용)
+        if (sslEnabled) {
+            clientConfigBuilder.useSsl();
+        }
+        
+        LettuceClientConfiguration clientConfig = clientConfigBuilder.build();
         
         return new LettuceConnectionFactory(config, clientConfig);
     }
