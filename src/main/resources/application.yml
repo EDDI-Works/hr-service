@@ -6,6 +6,13 @@ server:
 spring:
   application:
     name: ${SPRING_APPLICATION_NAME}
+  
+  web:
+    resources:
+      add-mappings: false  # 정적 리소스 자동 매핑 비활성화
+  
+  mvc:
+    throw-exception-if-no-handler-found: true  # 핸들러를 찾지 못하면 예외 발생
 
   datasource:
     url: ${SPRING_DATASOURCE_URL}
