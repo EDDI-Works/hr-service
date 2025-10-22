@@ -141,7 +141,7 @@ public class TeamController {
             String email = (String) request.get("email");
             // account_service에서 이메일로 accountId 조회
             try {
-                String url = accountServiceUrl + "/account/find-by-email?email=" + email;
+                String url = accountServiceUrl + "/api/account/find-by-email?email=" + email;
                 HttpHeaders headers = new HttpHeaders();
                 headers.set("Authorization", token);
                 
