@@ -6,7 +6,7 @@ on:
       - main
 
 env:
-  DOCKER_IMAGE: ghcr.io/${{ secrets.GIT_ACTOR }}/spring-backend:latest
+  DOCKER_IMAGE: ghcr.io/imcoder0000/hr-service:latest
 
 jobs:
   build:
@@ -19,18 +19,7 @@ jobs:
         uses: actions/setup-java@v3
         with:
           java-version: '17'
-          distribution: 'zulu' # https://github.com/actions/setup-java
-
-      ## gradle caching
-      # - name: Gradle Caching
-      #   uses: actions/cache@v3
-      #   with:
-      #     path: |
-      #       ~/.gradle/caches
-      #       ~/.gradle/wrapper
-      #     key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
-      #     restore-keys: |
-      #       ${{ runner.os }}-gradle-
+          distribution: 'zulu'
         
       - name: Create application.yaml for CD Deploy
         run: |
@@ -48,9 +37,9 @@ jobs:
       ## docker build & push to production
       - name: Docker build & push to prod
         run: |
-          docker login ghcr.io -u ${{ secrets.GIT_ACTOR  }} -p ${{ secrets.GHCR_TOKEN }}
+          docker login ghcr.io -u imcoder0000 -p ${{ secrets.GHCR_TOKEN }}
           docker buildx create --name arm64builder --use
-          docker buildx build --platform linux/amd64,linux/arm64 -f Dockerfile -t ghcr.io/${{ secrets.GIT_ACTOR  }}/spring-backend:latest --push .
+          docker buildx build --platform linux/amd64,linux/arm64 -f Dockerfile -t ghcr.io/imcoder0000/hr-service:latest --push .
           docker logout
           
   deploy:
@@ -58,21 +47,14 @@ jobs:
     name: Deploy
     runs-on: [ self-hosted, hr-service ]
     steps:
-    - name: Deploy to Production
-      uses: appleboy/ssh-action@v0.1.10
-      with:
-        host: ${{ secrets.HOST_IP }}
-        username: ec2-user
-        key: ${{ secrets.PRIVATE_KEY }}
-        script_stop: true
-        script: |
-          cd /home/ec2-user/spring/test-backend
-          docker-compose down
-
-          echo ${{ secrets.GHCR_TOKEN }} | docker login ghcr.io -u ${{ secrets.GIT_ACTOR }} --password-stdin
-          docker pull ${{ env.DOCKER_IMAGE }}
-
+      - name: Deploy to Production (local shell)
+        run: |
+          cd /home/ec2-user/hr-service/spring
+          docker-compose stop server  # 기존 DB/Redis는 유지
+      
+          echo ${{ secrets.GHCR_TOKEN }} | docker login ghcr.io -u imcoder0000 --password-stdin
+          docker pull ghcr.io/imcoder0000/hr-service:latest
           docker image prune -f
           docker logout
-
+      
           docker-compose up -d
