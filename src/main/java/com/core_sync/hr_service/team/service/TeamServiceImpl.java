@@ -283,7 +283,7 @@ public class TeamServiceImpl implements TeamService {
                     // account_service에서 닉네임 조회
                     String nickname = null;
                     try {
-                        String url = accountServiceUrl + "/account/" + member.getAccountId() + "/nickname";
+                        String url = accountServiceUrl + "/api/account/" + member.getAccountId() + "/nickname";
                         java.util.Map response = restTemplate.getForObject(url, java.util.Map.class);
                         if (response != null && response.containsKey("nickname")) {
                             nickname = (String) response.get("nickname");
